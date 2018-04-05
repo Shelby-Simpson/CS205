@@ -5,6 +5,8 @@ FROM Technician;
 SELECT *
 FROM COrder;
 SELECT *
+FROM AssemblyCard;
+SELECT *
 FROM Customer;
 SELECT *
 FROM Supplier;
@@ -24,3 +26,5 @@ SELECT *
 FROM For;
 SELECT *
 FROM Places;
+SELECT *
+FROM Creates;
