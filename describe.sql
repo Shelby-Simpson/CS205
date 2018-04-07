@@ -10,6 +10,6 @@
 \d Contains
 \d BOM
 \d Uses
-\d For
+\d ForPart
 \d Places
 \d Creates

@@ -1,0 +1,185 @@
+           Table "simpson055.part"
+  Column  |         Type          | Modifiers 
+----------+-----------------------+-----------
+ partid   | integer               | not null
+ name     | character varying(30) | not null
+ unitcost | double precision      | not null
+Indexes:
+    "part_pk" PRIMARY KEY, btree (partid)
+Check constraints:
+    "part_unitcost_check" CHECK (unitcost > 0::double precision)
+Referenced by:
+    TABLE "assembles" CONSTRAINT "assembles_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "contains" CONSTRAINT "contains_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "corder" CONSTRAINT "corder_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "forpart" CONSTRAINT "for_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "supplyshipment" CONSTRAINT "supply_shipment_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+
+          Table "simpson055.technician"
+    Column    |         Type          | Modifiers 
+--------------+-----------------------+-----------
+ technicianid | integer               | not null
+ name         | character varying(30) | not null
+ address      | character varying(50) | 
+Indexes:
+    "technician_pk" PRIMARY KEY, btree (technicianid)
+Referenced by:
+    TABLE "assembles" CONSTRAINT "assembles_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
+    TABLE "uses" CONSTRAINT "uses_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
+
+    Table "simpson055.corder"
+   Column   |  Type   | Modifiers 
+------------+---------+-----------
+ orderid    | integer | not null
+ customerid | integer | not null
+ partid     | integer | not null
+Indexes:
+    "corder_pk" PRIMARY KEY, btree (orderid)
+Foreign-key constraints:
+    "corder_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+    "corder_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+Referenced by:
+    TABLE "assemblycard" CONSTRAINT "assemblycard_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    TABLE "creates" CONSTRAINT "creates_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    TABLE "forpart" CONSTRAINT "for_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    TABLE "places" CONSTRAINT "places_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    TABLE "uses" CONSTRAINT "uses_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+
+ Table "simpson055.assemblycard"
+   Column   |  Type   | Modifiers 
+------------+---------+-----------
+ cardnumber | integer | not null
+ orderid    | integer | not null
+ exactdate  | date    | 
+Indexes:
+    "assemblycard_pk" PRIMARY KEY, btree (cardnumber)
+Foreign-key constraints:
+    "assemblycard_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+Referenced by:
+    TABLE "creates" CONSTRAINT "creates_assemblycard_fk" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
+
+          Table "simpson055.customer"
+   Column   |         Type          | Modifiers 
+------------+-----------------------+-----------
+ customerid | integer               | not null
+ name       | character varying(30) | not null
+ address    | character varying(50) | not null
+Indexes:
+    "customers_pk" PRIMARY KEY, btree (customerid)
+Referenced by:
+    TABLE "corder" CONSTRAINT "corder_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+    TABLE "places" CONSTRAINT "places_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+
+          Table "simpson055.supplier"
+   Column   |         Type          | Modifiers 
+------------+-----------------------+-----------
+ supplierid | integer               | not null
+ name       | character varying(30) | not null
+ address    | character varying(50) | not null
+Indexes:
+    "supplier_pk" PRIMARY KEY, btree (supplierid)
+Referenced by:
+    TABLE "ships" CONSTRAINT "ships_supplier_fk" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
+    TABLE "supplyshipment" CONSTRAINT "supply_shipment_supplier_fk" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
+
+Table "simpson055.supplyshipment"
+   Column   |  Type   | Modifiers 
+------------+---------+-----------
+ supplyid   | integer | not null
+ quantity   | integer | not null
+ supplierid | integer | not null
+ partid     | integer | not null
+Indexes:
+    "supply_shipment_pk" PRIMARY KEY, btree (supplyid)
+Foreign-key constraints:
+    "supply_shipment_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    "supply_shipment_supplier_fk" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
+Referenced by:
+    TABLE "contains" CONSTRAINT "contains_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
+    TABLE "ships" CONSTRAINT "ships_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
+
+    Table "simpson055.assembles"
+    Column    |  Type   | Modifiers 
+--------------+---------+-----------
+ technicianid | integer | not null
+ partid       | integer | not null
+Indexes:
+    "assembles_pk" PRIMARY KEY, btree (technicianid, partid)
+Foreign-key constraints:
+    "assembles_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    "assembles_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
+
+     Table "simpson055.ships"
+   Column   |  Type   | Modifiers 
+------------+---------+-----------
+ supplierid | integer | not null
+ supplyid   | integer | not null
+Indexes:
+    "ships_pk" PRIMARY KEY, btree (supplierid, supplyid)
+Foreign-key constraints:
+    "ships_supplier_fk" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
+    "ships_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
+
+  Table "simpson055.contains"
+  Column  |  Type   | Modifiers 
+----------+---------+-----------
+ partid   | integer | not null
+ supplyid | integer | not null
+Indexes:
+    "contains_pk" PRIMARY KEY, btree (partid, supplyid)
+Foreign-key constraints:
+    "contains_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    "contains_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
+
+              Table "simpson055.bom"
+    Column     |         Type          | Modifiers 
+---------------+-----------------------+-----------
+ compositepart | character varying(30) | not null
+ componentpart | character varying(30) | not null
+Indexes:
+    "bom_pk" PRIMARY KEY, btree (compositepart, componentpart)
+
+      Table "simpson055.uses"
+    Column    |  Type   | Modifiers 
+--------------+---------+-----------
+ technicianid | integer | not null
+ orderid      | integer | not null
+Indexes:
+    "use_pk" PRIMARY KEY, btree (technicianid, orderid)
+Foreign-key constraints:
+    "uses_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    "uses_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
+
+  Table "simpson055.forpart"
+ Column  |  Type   | Modifiers 
+---------+---------+-----------
+ partid  | integer | not null
+ orderid | integer | not null
+Indexes:
+    "for_pk" PRIMARY KEY, btree (partid, orderid)
+Foreign-key constraints:
+    "for_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    "for_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+
+    Table "simpson055.places"
+   Column   |  Type   | Modifiers 
+------------+---------+-----------
+ customerid | integer | not null
+ orderid    | integer | not null
+Indexes:
+    "places_pk" PRIMARY KEY, btree (customerid, orderid)
+Foreign-key constraints:
+    "places_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+    "places_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+
+    Table "simpson055.creates"
+   Column   |  Type   | Modifiers 
+------------+---------+-----------
+ orderid    | integer | not null
+ cardnumber | integer | not null
+Indexes:
+    "creates_pk" PRIMARY KEY, btree (orderid, cardnumber)
+Foreign-key constraints:
+    "creates_assemblycard_fk" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
+    "creates_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+

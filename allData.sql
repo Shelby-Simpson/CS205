@@ -23,7 +23,7 @@ FROM BOM;
 SELECT *
 FROM Uses;
 SELECT *
-FROM For;
+FROM ForPart;
 SELECT *
 FROM Places;
 SELECT *
