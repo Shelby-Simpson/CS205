@@ -10,7 +10,7 @@ Name VARCHAR(30) NOT NULL,
 Street VARCHAR(30) NOT NULL,
 City VARCHAR(20) NOT NULL,
 State CHAR(2) NOT NULL,
-State VARCHAR(10) NOT NULL,
+Zip VARCHAR(10) NOT NULL,
 CONSTRAINT customers_pk PRIMARY KEY (CustomerID));
 
 CREATE TABLE Technician (
@@ -19,7 +19,7 @@ Name VARCHAR(30) NOT NULL,
 Street VARCHAR(30),
 City VARCHAR(20),
 State CHAR(2),
-State VARCHAR(10),
+Zip VARCHAR(10),
 CONSTRAINT technician_pk PRIMARY KEY (TechnicianID));
 
 CREATE TABLE Supplier (
@@ -28,15 +28,13 @@ Name VARCHAR(30) NOT NULL,
 Street VARCHAR(30) NOT NULL,
 City VARCHAR(20) NOT NULL,
 State CHAR(2) NOT NULL,
-State VARCHAR(10) NOT NULL,
+Zip VARCHAR(10) NOT NULL,
 CONSTRAINT supplier_pk PRIMARY KEY (SupplierID));
 
 CREATE TABLE COrder_t (
 OrderID INTEGER NOT NULL,
 CustomerID INTEGER NOT NULL,
 PartID INTEGER NOT NULL,
-OrderTotal INTEGER NOT NULL,
-CHECK (OrderTotal >= 0),
 CONSTRAINT corder_pk PRIMARY KEY (OrderID),
 CONSTRAINT corder_customer_fk FOREIGN KEY (CustomerID) REFERENCES Customer,
 CONSTRAINT corder_part_fk FOREIGN KEY (PartID) REFERENCES Part);
@@ -83,9 +81,11 @@ CONSTRAINT contains_part_fk FOREIGN KEY (PartID) REFERENCES Part,
 CONSTRAINT contains_supply_fk FOREIGN KEY (SupplyID) REFERENCES SupplyShipment);
 
 CREATE TABLE BOM (
-CompositePart VARCHAR(30),
-ComponentPart VARCHAR(30),
-CONSTRAINT bom_pk PRIMARY KEY (CompositePart, ComponentPart));
+CompositePart INTEGER,
+ComponentPart Integers,
+CONSTRAINT bom_pk PRIMARY KEY (CompositePart, ComponentPart)
+CONSTRAINT bom_composite_fk FOREIGN KEY (CompositePart) REFERENCES Part
+CONSTRAINT bom_component_fk FOREIGN KEY (ComponentPart) REFERENCES Part);
 
 CREATE TABLE Uses (
 TechnicianID INTEGER NOT NULL,
@@ -98,9 +98,7 @@ CREATE TABLE ForPart_t (
 PartID INTEGER NOT NULL,
 OrderID INTEGER NOT NULL,
 Quantity INTEGER NOT NULL,
-LineTotal INTEGER NOT NULL,
-CHECK (Quantity >= 0),
-CHECK (LineTotal >= 0),
+CHECK (Quantity >= 0),,
 CONSTRAINT for_pk PRIMARY KEY (PartID, OrderID),
 CONSTRAINT for_part_fk FOREIGN KEY (PartID) REFERENCES Part,
 CONSTRAINT for_order_fk FOREIGN KEY (OrderID) REFERENCES COrder_t);
