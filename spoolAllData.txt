@@ -1,0 +1,83 @@
+Script run on Wed 04/18/2018 at 10:32 PM
+Script run by  simpson055  on server  10.151.168.51  with db  cs205 
+ partid |   name   | unitcost 
+--------+----------+----------
+      2 | Wing     |    25000
+      3 | Fuselage |    80000
+(2 rows)
+
+ technicianid |   name    | street | city | state | zip 
+--------------+-----------+--------+------+-------+-----
+            1 | Elon Musk |        |      |       | 
+(1 row)
+
+ orderid | customerid | partid 
+---------+------------+--------
+       1 |          1 |      2
+       2 |          2 |      3
+(2 rows)
+
+ orderid | ordertotal 
+---------+------------
+       1 |           
+       2 |           
+(2 rows)
+
+ cardnumber | orderid | exactdate  
+------------+---------+------------
+          2 |       2 | 2018-09-23
+          1 |       1 | 2018-12-12
+(2 rows)
+
+ customerid |      name       |          street           |   city    | state |  zip  
+------------+-----------------+---------------------------+-----------+-------+-------
+          1 | Lockheed Martin | 6801 Rockledge Drive      | Bethesda  | MD    | 20817
+          3 | Boeing          | 100 North Riverside Plaza | Chicago   | IL    | 60606
+          2 | Dylan Keane     | 5 David Way               | Cupertino | CA    | 95014
+(3 rows)
+
+ supplierid |      name       |    street     | city  | state |  zip  
+------------+-----------------+---------------+-------+-------+-------
+          1 | Plane Parts Inc | 12 Breeze Way | Miami | FL    | 33101
+(1 row)
+
+ supplyid | quantity | supplierid | partid 
+----------+----------+------------+--------
+(0 rows)
+
+ technicianid | partid 
+--------------+--------
+(0 rows)
+
+ supplierid | supplyid 
+------------+----------
+(0 rows)
+
+ partid | supplyid 
+--------+----------
+(0 rows)
+
+ compositepart | componentpart 
+---------------+---------------
+(0 rows)
+
+ technicianid | orderid 
+--------------+---------
+(0 rows)
+
+ partid | orderid | quantity 
+--------+---------+----------
+(0 rows)
+
+ partid | orderid | quantity | linetotal 
+--------+---------+----------+-----------
+(0 rows)
+
+ customerid | orderid 
+------------+---------
+(0 rows)
+
+ orderid | cardnumber 
+---------+------------
+(0 rows)
+

@@ -1,3 +1,5 @@
+Script run on Wed 04/18/2018 at 10:31 PM
+Script run by  simpson055  on server  10.151.168.51  with db  cs205 
            Table "simpson055.part"
   Column  |         Type          | Modifiers 
 ----------+-----------------------+-----------
@@ -10,9 +12,11 @@ Check constraints:
     "part_unitcost_check" CHECK (unitcost > 0::double precision)
 Referenced by:
     TABLE "assembles" CONSTRAINT "assembles_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "bom" CONSTRAINT "bom_component_fk" FOREIGN KEY (componentpart) REFERENCES part(partid)
+    TABLE "bom" CONSTRAINT "bom_composite_fk" FOREIGN KEY (compositepart) REFERENCES part(partid)
     TABLE "contains" CONSTRAINT "contains_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    TABLE "corder" CONSTRAINT "corder_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    TABLE "forpart" CONSTRAINT "for_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "corder_t" CONSTRAINT "corder_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "forpart_t" CONSTRAINT "for_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
     TABLE "supplyshipment" CONSTRAINT "supply_shipment_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
 
           Table "simpson055.technician"
@@ -20,14 +24,17 @@ Referenced by:
 --------------+-----------------------+-----------
  technicianid | integer               | not null
  name         | character varying(30) | not null
- address      | character varying(50) | 
+ street       | character varying(30) | 
+ city         | character varying(20) | 
+ state        | character(2)          | 
+ zip          | character varying(10) | 
 Indexes:
     "technician_pk" PRIMARY KEY, btree (technicianid)
 Referenced by:
     TABLE "assembles" CONSTRAINT "assembles_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
     TABLE "uses" CONSTRAINT "uses_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
 
-    Table "simpson055.corder"
+   Table "simpson055.corder_t"
    Column   |  Type   | Modifiers 
 ------------+---------+-----------
  orderid    | integer | not null
@@ -39,11 +46,11 @@ Foreign-key constraints:
     "corder_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
     "corder_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
 Referenced by:
-    TABLE "assemblycard" CONSTRAINT "assemblycard_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
-    TABLE "creates" CONSTRAINT "creates_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
-    TABLE "forpart" CONSTRAINT "for_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
-    TABLE "places" CONSTRAINT "places_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
-    TABLE "uses" CONSTRAINT "uses_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    TABLE "assemblycard" CONSTRAINT "assemblycard_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    TABLE "creates" CONSTRAINT "creates_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    TABLE "forpart_t" CONSTRAINT "for_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    TABLE "places" CONSTRAINT "places_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    TABLE "uses" CONSTRAINT "uses_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
 
  Table "simpson055.assemblycard"
    Column   |  Type   | Modifiers 
@@ -54,7 +61,7 @@ Referenced by:
 Indexes:
     "assemblycard_pk" PRIMARY KEY, btree (cardnumber)
 Foreign-key constraints:
-    "assemblycard_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    "assemblycard_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
 Referenced by:
     TABLE "creates" CONSTRAINT "creates_assemblycard_fk" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
 
@@ -63,11 +70,14 @@ Referenced by:
 ------------+-----------------------+-----------
  customerid | integer               | not null
  name       | character varying(30) | not null
- address    | character varying(50) | not null
+ street     | character varying(30) | not null
+ city       | character varying(20) | not null
+ state      | character(2)          | not null
+ zip        | character varying(10) | not null
 Indexes:
     "customers_pk" PRIMARY KEY, btree (customerid)
 Referenced by:
-    TABLE "corder" CONSTRAINT "corder_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+    TABLE "corder_t" CONSTRAINT "corder_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
     TABLE "places" CONSTRAINT "places_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
 
           Table "simpson055.supplier"
@@ -75,7 +85,10 @@ Referenced by:
 ------------+-----------------------+-----------
  supplierid | integer               | not null
  name       | character varying(30) | not null
- address    | character varying(50) | not null
+ street     | character varying(30) | not null
+ city       | character varying(20) | not null
+ state      | character(2)          | not null
+ zip        | character varying(10) | not null
 Indexes:
     "supplier_pk" PRIMARY KEY, btree (supplierid)
 Referenced by:
@@ -131,13 +144,16 @@ Foreign-key constraints:
     "contains_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
     "contains_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
 
-              Table "simpson055.bom"
-    Column     |         Type          | Modifiers 
----------------+-----------------------+-----------
- compositepart | character varying(30) | not null
- componentpart | character varying(30) | not null
+       Table "simpson055.bom"
+    Column     |  Type   | Modifiers 
+---------------+---------+-----------
+ compositepart | integer | not null
+ componentpart | integer | not null
 Indexes:
     "bom_pk" PRIMARY KEY, btree (compositepart, componentpart)
+Foreign-key constraints:
+    "bom_component_fk" FOREIGN KEY (componentpart) REFERENCES part(partid)
+    "bom_composite_fk" FOREIGN KEY (compositepart) REFERENCES part(partid)
 
       Table "simpson055.uses"
     Column    |  Type   | Modifiers 
@@ -147,18 +163,21 @@ Indexes:
 Indexes:
     "use_pk" PRIMARY KEY, btree (technicianid, orderid)
 Foreign-key constraints:
-    "uses_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    "uses_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
     "uses_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
 
-  Table "simpson055.forpart"
- Column  |  Type   | Modifiers 
----------+---------+-----------
- partid  | integer | not null
- orderid | integer | not null
+  Table "simpson055.forpart_t"
+  Column  |  Type   | Modifiers 
+----------+---------+-----------
+ partid   | integer | not null
+ orderid  | integer | not null
+ quantity | integer | not null
 Indexes:
     "for_pk" PRIMARY KEY, btree (partid, orderid)
+Check constraints:
+    "forpart_t_quantity_check" CHECK (quantity >= 0)
 Foreign-key constraints:
-    "for_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    "for_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
     "for_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
 
     Table "simpson055.places"
@@ -170,7 +189,7 @@ Indexes:
     "places_pk" PRIMARY KEY, btree (customerid, orderid)
 Foreign-key constraints:
     "places_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
-    "places_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    "places_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
 
     Table "simpson055.creates"
    Column   |  Type   | Modifiers 
@@ -181,5 +200,5 @@ Indexes:
     "creates_pk" PRIMARY KEY, btree (orderid, cardnumber)
 Foreign-key constraints:
     "creates_assemblycard_fk" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
-    "creates_order_fk" FOREIGN KEY (orderid) REFERENCES corder(orderid)
+    "creates_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
 

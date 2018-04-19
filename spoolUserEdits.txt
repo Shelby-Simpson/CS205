@@ -1,0 +1,13 @@
+Script run on Wed 04/18/2018 at 10:31 PM
+Script run by  simpson055  on server  10.151.168.51  with db  cs205 
+INSERT 0 3
+INSERT 0 3
+UPDATE 1
+DELETE 1
+INSERT 0 2
+INSERT 0 2
+UPDATE 1
+INSERT 0 2
+UPDATE 1
+INSERT 0 1
+DELETE 1

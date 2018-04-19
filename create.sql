@@ -1,3 +1,10 @@
+\qecho -n 'Script run on '
+\qecho -n `date /t`
+\qecho -n 'at '
+\qecho `time /t`
+\qecho -n 'Script run by ' :USER ' on server ' :HOST ' with db ' :DBNAME
+\qecho ' '
+
 CREATE TABLE Part (
 PartID INTEGER NOT NULL,
 Name VARCHAR(30) NOT NULL,
@@ -39,10 +46,6 @@ CONSTRAINT corder_pk PRIMARY KEY (OrderID),
 CONSTRAINT corder_customer_fk FOREIGN KEY (CustomerID) REFERENCES Customer,
 CONSTRAINT corder_part_fk FOREIGN KEY (PartID) REFERENCES Part);
 
-CREATE VIEW COrder AS
-SELECT OrderID, (SELECT SUM(LineTotal) FROM ForPart) AS OrderTotal
-FROM COrder_t;
-
 CREATE TABLE AssemblyCard (
 CardNumber INTEGER NOT NULL,
 OrderID INTEGER NOT NULL,
@@ -82,9 +85,9 @@ CONSTRAINT contains_supply_fk FOREIGN KEY (SupplyID) REFERENCES SupplyShipment);
 
 CREATE TABLE BOM (
 CompositePart INTEGER,
-ComponentPart Integers,
-CONSTRAINT bom_pk PRIMARY KEY (CompositePart, ComponentPart)
-CONSTRAINT bom_composite_fk FOREIGN KEY (CompositePart) REFERENCES Part
+ComponentPart INTEGER,
+CONSTRAINT bom_pk PRIMARY KEY (CompositePart, ComponentPart),
+CONSTRAINT bom_composite_fk FOREIGN KEY (CompositePart) REFERENCES Part,
 CONSTRAINT bom_component_fk FOREIGN KEY (ComponentPart) REFERENCES Part);
 
 CREATE TABLE Uses (
@@ -98,14 +101,18 @@ CREATE TABLE ForPart_t (
 PartID INTEGER NOT NULL,
 OrderID INTEGER NOT NULL,
 Quantity INTEGER NOT NULL,
-CHECK (Quantity >= 0),,
+CHECK (Quantity >= 0),
 CONSTRAINT for_pk PRIMARY KEY (PartID, OrderID),
 CONSTRAINT for_part_fk FOREIGN KEY (PartID) REFERENCES Part,
 CONSTRAINT for_order_fk FOREIGN KEY (OrderID) REFERENCES COrder_t);
 
 CREATE VIEW ForPart AS
 SELECT PartID, OrderID, Quantity, (UnitCost * Quantity) AS LineTotal
-FROM ForPart_t;
+FROM ForPart_t NATURAL JOIN Part;
+
+CREATE VIEW COrder AS
+SELECT OrderID, (SELECT SUM(LineTotal) FROM ForPart) AS OrderTotal
+FROM COrder_t;
 
 CREATE TABLE Places (
 CustomerID INTEGER NOT NULL,
