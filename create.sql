@@ -40,6 +40,7 @@ CONSTRAINT supplier_pk PRIMARY KEY (SupplierID));
 
 CREATE TABLE COrder_t (
 OrderID INTEGER NOT NULL,
+DateToFill DATE,
 CustomerID INTEGER NOT NULL,
 PartID INTEGER NOT NULL,
 CONSTRAINT corder_pk PRIMARY KEY (OrderID),
@@ -49,7 +50,6 @@ CONSTRAINT corder_part_fk FOREIGN KEY (PartID) REFERENCES Part);
 CREATE TABLE AssemblyCard (
 CardNumber INTEGER NOT NULL,
 OrderID INTEGER NOT NULL,
-ExactDate DATE,
 CONSTRAINT assemblycard_pk PRIMARY KEY (CardNumber),
 CONSTRAINT assemblycard_order_fk FOREIGN KEY (OrderID) REFERENCES COrder_t);
 
