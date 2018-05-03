@@ -1,32 +1,34 @@
-Script run on Wed 04/18/2018 at 10:32 PM
+Script run on Wed 05/02/2018 at 11:44 PM
 Script run by  simpson055  on server  10.151.168.51  with db  cs205 
  partid |   name   | unitcost 
 --------+----------+----------
       2 | Wing     |    25000
       3 | Fuselage |    80000
-(2 rows)
+      4 | Flaps    |     5000
+      5 | Aileron  |    20000
+(4 rows)
 
  technicianid |   name    | street | city | state | zip 
 --------------+-----------+--------+------+-------+-----
             1 | Elon Musk |        |      |       | 
 (1 row)
 
- orderid | customerid | partid 
----------+------------+--------
-       1 |          1 |      2
-       2 |          2 |      3
+ orderid | datetofill | customerid | partid 
+---------+------------+------------+--------
+       2 | 2019-09-02 |          2 |      3
+       1 | 2018-12-12 |          1 |      2
 (2 rows)
 
  orderid | ordertotal 
 ---------+------------
-       1 |           
-       2 |           
+       2 |     155000
+       1 |     155000
 (2 rows)
 
- cardnumber | orderid | exactdate  
-------------+---------+------------
-          2 |       2 | 2018-09-23
-          1 |       1 | 2018-12-12
+ cardnumber | orderid 
+------------+---------
+          1 |       1
+          2 |       2
 (2 rows)
 
  customerid |      name       |          street           |   city    | state |  zip  
@@ -36,48 +38,67 @@ Script run by  simpson055  on server  10.151.168.51  with db  cs205
           2 | Dylan Keane     | 5 David Way               | Cupertino | CA    | 95014
 (3 rows)
 
- supplierid |      name       |    street     | city  | state |  zip  
-------------+-----------------+---------------+-------+-------+-------
-          1 | Plane Parts Inc | 12 Breeze Way | Miami | FL    | 33101
-(1 row)
+ supplierid |      name       |    street     |  city   | state |  zip  
+------------+-----------------+---------------+---------+-------+-------
+          1 | Plane Parts Inc | 12 Breeze Way | Miami   | FL    | 33101
+          2 | Wings R Us      | 4 Grey Road   | Pheonix | AZ    | 85010
+(2 rows)
 
  supplyid | quantity | supplierid | partid 
 ----------+----------+------------+--------
-(0 rows)
+        1 |        5 |          1 |      4
+        2 |        5 |          1 |      5
+(2 rows)
 
  technicianid | partid 
 --------------+--------
-(0 rows)
+            1 |      2
+(1 row)
 
  supplierid | supplyid 
 ------------+----------
-(0 rows)
+          1 |        1
+          1 |        2
+(2 rows)
 
  partid | supplyid 
 --------+----------
-(0 rows)
+      4 |        1
+      5 |        2
+(2 rows)
 
  compositepart | componentpart 
 ---------------+---------------
-(0 rows)
+             2 |             4
+             2 |             5
+(2 rows)
 
- technicianid | orderid 
---------------+---------
-(0 rows)
+ technicianid | cardnumber 
+--------------+------------
+            1 |          1
+(1 row)
 
  partid | orderid | quantity 
 --------+---------+----------
-(0 rows)
+      2 |       1 |        3
+      3 |       2 |        1
+(2 rows)
 
  partid | orderid | quantity | linetotal 
 --------+---------+----------+-----------
-(0 rows)
+      2 |       1 |        3 |     75000
+      3 |       2 |        1 |     80000
+(2 rows)
 
  customerid | orderid 
 ------------+---------
-(0 rows)
+          1 |       1
+          2 |       2
+(2 rows)
 
  orderid | cardnumber 
 ---------+------------
-(0 rows)
+       1 |          1
+       2 |          2
+(2 rows)
 

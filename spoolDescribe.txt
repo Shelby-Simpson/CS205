@@ -1,4 +1,4 @@
-Script run on Wed 04/18/2018 at 10:31 PM
+Script run on Wed 05/02/2018 at 11:43 PM
 Script run by  simpson055  on server  10.151.168.51  with db  cs205 
            Table "simpson055.part"
   Column  |         Type          | Modifiers 
@@ -7,17 +7,19 @@ Script run by  simpson055  on server  10.151.168.51  with db  cs205
  name     | character varying(30) | not null
  unitcost | double precision      | not null
 Indexes:
-    "part_pk" PRIMARY KEY, btree (partid)
+    "part_pkey" PRIMARY KEY, btree (partid)
 Check constraints:
+    "part_name_check" CHECK (name::text <> ' '::text)
+    "part_partid_check" CHECK (partid > 0)
     "part_unitcost_check" CHECK (unitcost > 0::double precision)
 Referenced by:
-    TABLE "assembles" CONSTRAINT "assembles_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    TABLE "bom" CONSTRAINT "bom_component_fk" FOREIGN KEY (componentpart) REFERENCES part(partid)
-    TABLE "bom" CONSTRAINT "bom_composite_fk" FOREIGN KEY (compositepart) REFERENCES part(partid)
-    TABLE "contains" CONSTRAINT "contains_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    TABLE "corder_t" CONSTRAINT "corder_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    TABLE "forpart_t" CONSTRAINT "for_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    TABLE "supplyshipment" CONSTRAINT "supply_shipment_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "assembles" CONSTRAINT "assembles_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "bom" CONSTRAINT "bom_componentpart_fkey" FOREIGN KEY (componentpart) REFERENCES part(partid)
+    TABLE "bom" CONSTRAINT "bom_compositepart_fkey" FOREIGN KEY (compositepart) REFERENCES part(partid)
+    TABLE "contains" CONSTRAINT "contains_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "corder_t" CONSTRAINT "corder_t_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "forpart_t" CONSTRAINT "forpart_t_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
+    TABLE "supplyshipment" CONSTRAINT "supplyshipment_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
 
           Table "simpson055.technician"
     Column    |         Type          | Modifiers 
@@ -29,41 +31,56 @@ Referenced by:
  state        | character(2)          | 
  zip          | character varying(10) | 
 Indexes:
-    "technician_pk" PRIMARY KEY, btree (technicianid)
+    "technician_pkey" PRIMARY KEY, btree (technicianid)
+Check constraints:
+    "technician_city_check" CHECK (city::text <> ' '::text)
+    "technician_name_check" CHECK (name::text <> ' '::text)
+    "technician_state_check" CHECK (state <> ' '::bpchar)
+    "technician_street_check" CHECK (street::text <> ' '::text)
+    "technician_technicianid_check" CHECK (technicianid > 0)
+    "technician_zip_check" CHECK (zip::text <> ' '::text)
 Referenced by:
-    TABLE "assembles" CONSTRAINT "assembles_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
-    TABLE "uses" CONSTRAINT "uses_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
+    TABLE "assembles" CONSTRAINT "assembles_technicianid_fkey" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
+    TABLE "uses" CONSTRAINT "uses_technicianid_fkey" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
 
    Table "simpson055.corder_t"
    Column   |  Type   | Modifiers 
 ------------+---------+-----------
  orderid    | integer | not null
+ datetofill | date    | 
  customerid | integer | not null
  partid     | integer | not null
 Indexes:
-    "corder_pk" PRIMARY KEY, btree (orderid)
+    "corder_t_pkey" PRIMARY KEY, btree (orderid)
+Check constraints:
+    "corder_t_customerid_check" CHECK (customerid > 0)
+    "corder_t_datetofill_check" CHECK (datetofill >= 'now'::text::date)
+    "corder_t_orderid_check" CHECK (orderid > 0)
+    "corder_t_partid_check" CHECK (partid > 0)
 Foreign-key constraints:
-    "corder_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
-    "corder_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    "corder_t_customerid_fkey" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+    "corder_t_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
 Referenced by:
-    TABLE "assemblycard" CONSTRAINT "assemblycard_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
-    TABLE "creates" CONSTRAINT "creates_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
-    TABLE "forpart_t" CONSTRAINT "for_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
-    TABLE "places" CONSTRAINT "places_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
-    TABLE "uses" CONSTRAINT "uses_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    TABLE "assemblycard" CONSTRAINT "assemblycard_orderid_fkey" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    TABLE "creates" CONSTRAINT "creates_orderid_fkey" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    TABLE "forpart_t" CONSTRAINT "forpart_t_orderid_fkey" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    TABLE "places" CONSTRAINT "places_orderid_fkey" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
 
  Table "simpson055.assemblycard"
    Column   |  Type   | Modifiers 
 ------------+---------+-----------
  cardnumber | integer | not null
  orderid    | integer | not null
- exactdate  | date    | 
 Indexes:
-    "assemblycard_pk" PRIMARY KEY, btree (cardnumber)
+    "assemblycard_pkey" PRIMARY KEY, btree (cardnumber)
+Check constraints:
+    "assemblycard_cardnumber_check" CHECK (cardnumber > 0)
+    "assemblycard_orderid_check" CHECK (orderid > 0)
 Foreign-key constraints:
-    "assemblycard_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    "assemblycard_orderid_fkey" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
 Referenced by:
-    TABLE "creates" CONSTRAINT "creates_assemblycard_fk" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
+    TABLE "creates" CONSTRAINT "creates_cardnumber_fkey" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
+    TABLE "uses" CONSTRAINT "uses_cardnumber_fkey" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
 
           Table "simpson055.customer"
    Column   |         Type          | Modifiers 
@@ -75,10 +92,17 @@ Referenced by:
  state      | character(2)          | not null
  zip        | character varying(10) | not null
 Indexes:
-    "customers_pk" PRIMARY KEY, btree (customerid)
+    "customer_pkey" PRIMARY KEY, btree (customerid)
+Check constraints:
+    "customer_city_check" CHECK (city::text <> ' '::text)
+    "customer_customerid_check" CHECK (customerid > 0)
+    "customer_name_check" CHECK (name::text <> ' '::text)
+    "customer_state_check" CHECK (state <> ' '::bpchar)
+    "customer_street_check" CHECK (street::text <> ' '::text)
+    "customer_zip_check" CHECK (zip::text <> ' '::text)
 Referenced by:
-    TABLE "corder_t" CONSTRAINT "corder_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
-    TABLE "places" CONSTRAINT "places_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+    TABLE "corder_t" CONSTRAINT "corder_t_customerid_fkey" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+    TABLE "places" CONSTRAINT "places_customerid_fkey" FOREIGN KEY (customerid) REFERENCES customer(customerid)
 
           Table "simpson055.supplier"
    Column   |         Type          | Modifiers 
@@ -90,10 +114,17 @@ Referenced by:
  state      | character(2)          | not null
  zip        | character varying(10) | not null
 Indexes:
-    "supplier_pk" PRIMARY KEY, btree (supplierid)
+    "supplier_pkey" PRIMARY KEY, btree (supplierid)
+Check constraints:
+    "supplier_city_check" CHECK (city::text <> ' '::text)
+    "supplier_name_check" CHECK (name::text <> ' '::text)
+    "supplier_state_check" CHECK (state <> ' '::bpchar)
+    "supplier_street_check" CHECK (street::text <> ' '::text)
+    "supplier_supplierid_check" CHECK (supplierid > 0)
+    "supplier_zip_check" CHECK (zip::text <> ' '::text)
 Referenced by:
-    TABLE "ships" CONSTRAINT "ships_supplier_fk" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
-    TABLE "supplyshipment" CONSTRAINT "supply_shipment_supplier_fk" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
+    TABLE "ships" CONSTRAINT "ships_supplierid_fkey" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
+    TABLE "supplyshipment" CONSTRAINT "supplyshipment_supplierid_fkey" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
 
 Table "simpson055.supplyshipment"
    Column   |  Type   | Modifiers 
@@ -103,13 +134,18 @@ Table "simpson055.supplyshipment"
  supplierid | integer | not null
  partid     | integer | not null
 Indexes:
-    "supply_shipment_pk" PRIMARY KEY, btree (supplyid)
+    "supplyshipment_pkey" PRIMARY KEY, btree (supplyid)
+Check constraints:
+    "supplyshipment_partid_check" CHECK (partid > 0)
+    "supplyshipment_quantity_check" CHECK (quantity > 0)
+    "supplyshipment_supplierid_check" CHECK (supplierid > 0)
+    "supplyshipment_supplyid_check" CHECK (supplyid > 0)
 Foreign-key constraints:
-    "supply_shipment_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    "supply_shipment_supplier_fk" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
+    "supplyshipment_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
+    "supplyshipment_supplierid_fkey" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
 Referenced by:
-    TABLE "contains" CONSTRAINT "contains_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
-    TABLE "ships" CONSTRAINT "ships_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
+    TABLE "contains" CONSTRAINT "contains_supplyid_fkey" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
+    TABLE "ships" CONSTRAINT "ships_supplyid_fkey" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
 
     Table "simpson055.assembles"
     Column    |  Type   | Modifiers 
@@ -118,9 +154,12 @@ Referenced by:
  partid       | integer | not null
 Indexes:
     "assembles_pk" PRIMARY KEY, btree (technicianid, partid)
+Check constraints:
+    "assembles_partid_check" CHECK (partid > 0)
+    "assembles_technicianid_check" CHECK (technicianid > 0)
 Foreign-key constraints:
-    "assembles_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    "assembles_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
+    "assembles_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
+    "assembles_technicianid_fkey" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
 
      Table "simpson055.ships"
    Column   |  Type   | Modifiers 
@@ -129,9 +168,12 @@ Foreign-key constraints:
  supplyid   | integer | not null
 Indexes:
     "ships_pk" PRIMARY KEY, btree (supplierid, supplyid)
+Check constraints:
+    "ships_supplierid_check" CHECK (supplierid > 0)
+    "ships_supplyid_check" CHECK (supplyid > 0)
 Foreign-key constraints:
-    "ships_supplier_fk" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
-    "ships_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
+    "ships_supplierid_fkey" FOREIGN KEY (supplierid) REFERENCES supplier(supplierid)
+    "ships_supplyid_fkey" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
 
   Table "simpson055.contains"
   Column  |  Type   | Modifiers 
@@ -140,9 +182,12 @@ Foreign-key constraints:
  supplyid | integer | not null
 Indexes:
     "contains_pk" PRIMARY KEY, btree (partid, supplyid)
+Check constraints:
+    "contains_partid_check" CHECK (partid > 0)
+    "contains_supplyid_check" CHECK (supplyid > 0)
 Foreign-key constraints:
-    "contains_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
-    "contains_supply_fk" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
+    "contains_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
+    "contains_supplyid_fkey" FOREIGN KEY (supplyid) REFERENCES supplyshipment(supplyid)
 
        Table "simpson055.bom"
     Column     |  Type   | Modifiers 
@@ -151,20 +196,26 @@ Foreign-key constraints:
  componentpart | integer | not null
 Indexes:
     "bom_pk" PRIMARY KEY, btree (compositepart, componentpart)
+Check constraints:
+    "bom_componentpart_check" CHECK (componentpart > 0)
+    "bom_compositepart_check" CHECK (compositepart > 0)
 Foreign-key constraints:
-    "bom_component_fk" FOREIGN KEY (componentpart) REFERENCES part(partid)
-    "bom_composite_fk" FOREIGN KEY (compositepart) REFERENCES part(partid)
+    "bom_componentpart_fkey" FOREIGN KEY (componentpart) REFERENCES part(partid)
+    "bom_compositepart_fkey" FOREIGN KEY (compositepart) REFERENCES part(partid)
 
       Table "simpson055.uses"
     Column    |  Type   | Modifiers 
 --------------+---------+-----------
  technicianid | integer | not null
- orderid      | integer | not null
+ cardnumber   | integer | not null
 Indexes:
-    "use_pk" PRIMARY KEY, btree (technicianid, orderid)
+    "use_pk" PRIMARY KEY, btree (technicianid, cardnumber)
+Check constraints:
+    "uses_cardnumber_check" CHECK (cardnumber > 0)
+    "uses_technicianid_check" CHECK (technicianid > 0)
 Foreign-key constraints:
-    "uses_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
-    "uses_technician_fk" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
+    "uses_cardnumber_fkey" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
+    "uses_technicianid_fkey" FOREIGN KEY (technicianid) REFERENCES technician(technicianid)
 
   Table "simpson055.forpart_t"
   Column  |  Type   | Modifiers 
@@ -175,10 +226,12 @@ Foreign-key constraints:
 Indexes:
     "for_pk" PRIMARY KEY, btree (partid, orderid)
 Check constraints:
+    "forpart_t_orderid_check" CHECK (orderid > 0)
+    "forpart_t_partid_check" CHECK (partid > 0)
     "forpart_t_quantity_check" CHECK (quantity >= 0)
 Foreign-key constraints:
-    "for_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
-    "for_part_fk" FOREIGN KEY (partid) REFERENCES part(partid)
+    "forpart_t_orderid_fkey" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    "forpart_t_partid_fkey" FOREIGN KEY (partid) REFERENCES part(partid)
 
     Table "simpson055.places"
    Column   |  Type   | Modifiers 
@@ -187,9 +240,12 @@ Foreign-key constraints:
  orderid    | integer | not null
 Indexes:
     "places_pk" PRIMARY KEY, btree (customerid, orderid)
+Check constraints:
+    "places_customerid_check" CHECK (customerid > 0)
+    "places_orderid_check" CHECK (orderid > 0)
 Foreign-key constraints:
-    "places_customer_fk" FOREIGN KEY (customerid) REFERENCES customer(customerid)
-    "places_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    "places_customerid_fkey" FOREIGN KEY (customerid) REFERENCES customer(customerid)
+    "places_orderid_fkey" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
 
     Table "simpson055.creates"
    Column   |  Type   | Modifiers 
@@ -198,7 +254,10 @@ Foreign-key constraints:
  cardnumber | integer | not null
 Indexes:
     "creates_pk" PRIMARY KEY, btree (orderid, cardnumber)
+Check constraints:
+    "creates_cardnumber_check" CHECK (cardnumber > 0)
+    "creates_orderid_check" CHECK (orderid > 0)
 Foreign-key constraints:
-    "creates_assemblycard_fk" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
-    "creates_order_fk" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
+    "creates_cardnumber_fkey" FOREIGN KEY (cardnumber) REFERENCES assemblycard(cardnumber)
+    "creates_orderid_fkey" FOREIGN KEY (orderid) REFERENCES corder_t(orderid)
 

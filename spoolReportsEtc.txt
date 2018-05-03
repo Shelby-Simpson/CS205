@@ -1,14 +1,19 @@
-Script run on Wed 04/18/2018 at 10:31 PM
+Script run on Wed 05/02/2018 at 11:44 PM
 Script run by  simpson055  on server  10.151.168.51  with db  cs205 
  technicianid | componentpart 
 --------------+---------------
-(0 rows)
+            1 |             4
+            1 |             5
+(2 rows)
 
  partid | unitcost | ordertotal 
 --------+----------+------------
-(0 rows)
+      2 |    25000 |     155000
+(1 row)
 
  customerid | count 
 ------------+-------
-(0 rows)
+          1 |     1
+          2 |     1
+(2 rows)
 

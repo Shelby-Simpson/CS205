@@ -1,4 +1,4 @@
-Script run on Wed 04/18/2018 at 10:31 PM
+Script run on Wed 05/02/2018 at 11:43 PM
 Script run by  simpson055  on server  10.151.168.51  with db  cs205 
 DROP TABLE
 DROP TABLE
